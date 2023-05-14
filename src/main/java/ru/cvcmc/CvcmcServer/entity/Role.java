@@ -3,7 +3,6 @@ package ru.cvcmc.CvcmcServer.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
 
@@ -11,13 +10,14 @@ import java.util.Set;
 @Table(name = "t_role")
 @Data
 @ToString
-public class Role implements GrantedAuthority {
+public class Role {
     @Id
     private Long id;
     private String name;
     @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
     public Role() {
     }
 
@@ -54,8 +54,4 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
-    @Override
-    public String getAuthority() {
-        return getName();
-    }
 }

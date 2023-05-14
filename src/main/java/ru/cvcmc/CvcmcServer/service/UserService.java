@@ -3,10 +3,6 @@ package ru.cvcmc.CvcmcServer.service;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.cvcmc.CvcmcServer.entity.Role;
 import ru.cvcmc.CvcmcServer.repository.RoleRepository;
@@ -18,26 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
     @PersistenceContext
     private EntityManager em;
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    RoleRepository roleRepository;
 //    @Autowired
-//    BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
-
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
-
-        return user;
-    }
+//    RoleRepository roleRepository;
 
     public User findUserById(Long userId) {
         Optional<User> userFromDb = userRepository.findById(userId);
@@ -55,8 +38,7 @@ public class UserService implements UserDetailsService {
             return false;
         }
 
-        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
-//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+//        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         user.setPassword(user.getPassword());
         userRepository.save(user);
         return true;
