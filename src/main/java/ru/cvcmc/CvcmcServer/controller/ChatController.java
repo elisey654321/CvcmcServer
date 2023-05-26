@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.cvcmc.CvcmcServer.entity.Chat;
+import ru.cvcmc.CvcmcServer.entity.HttpRequest;
 import ru.cvcmc.CvcmcServer.repository.ChatRepository;
+import ru.cvcmc.CvcmcServer.service.HttpRequestService;
 
 import java.util.List;
 
@@ -17,13 +19,27 @@ public class ChatController {
     ChatRepository chatRepository;
 
     @GetMapping("/chat/list")
-    public List<Chat> getChatList(){
-        return chatRepository.findAll();
+    public HttpRequest getChatList(){
+        HttpRequest request;
+        try {
+            List<Chat> allChat = chatRepository.findAll();
+            request = HttpRequestService.createHttpRequest(allChat, 200);
+        }catch (Exception e){
+            request = HttpRequestService.createHttpRequest(null, 300,e.getMessage());
+        }
+        return request;
     }
 
     @PostMapping("/chat/list")
-    public Chat addChat(@RequestBody Chat chat){
-        return chatRepository.save(chat);
+    public HttpRequest addChat(@RequestBody Chat chat){
+        HttpRequest request;
+        try {
+            chatRepository.saveAndFlush(chat);
+            request = HttpRequestService.createHttpRequest(chat, 200);
+        }catch (Exception e){
+            request = HttpRequestService.createHttpRequest(chat, 300,e.getMessage());
+        }
+        return request;
     }
 
 }
