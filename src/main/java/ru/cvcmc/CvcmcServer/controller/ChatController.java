@@ -1,10 +1,7 @@
 package ru.cvcmc.CvcmcServer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.cvcmc.CvcmcServer.entity.Chat;
 import ru.cvcmc.CvcmcServer.entity.HttpRequest;
 import ru.cvcmc.CvcmcServer.repository.ChatRepository;
@@ -13,12 +10,13 @@ import ru.cvcmc.CvcmcServer.service.HttpRequestService;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/chat/")
 public class ChatController {
 
     @Autowired
     ChatRepository chatRepository;
 
-    @GetMapping("/chat/list")
+    @GetMapping("/list")
     public HttpRequest getChatList(){
         HttpRequest request;
         try {
@@ -30,7 +28,7 @@ public class ChatController {
         return request;
     }
 
-    @PostMapping("/chat/list")
+    @PostMapping("/list")
     public HttpRequest addChat(@RequestBody Chat chat){
         HttpRequest request;
         try {
