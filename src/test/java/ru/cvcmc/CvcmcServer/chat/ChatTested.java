@@ -22,7 +22,7 @@ public class ChatTested {
     public void testGetChat(){
         try {
             TestRestTemplate restTemplate = new TestRestTemplate();
-            HttpRequest answer = restTemplate.getForObject("http://localhost:8043/chat/list/2", HttpRequest.class);
+            HttpRequest answer = restTemplate.getForObject("http://localhost:8043/chat/list", HttpRequest.class);
             System.out.println(answer);
         }catch (Exception e){
             e.printStackTrace();

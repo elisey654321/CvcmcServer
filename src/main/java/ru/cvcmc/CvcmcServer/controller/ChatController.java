@@ -14,6 +14,7 @@ import ru.cvcmc.CvcmcServer.repository.ChatRepository;
 import ru.cvcmc.CvcmcServer.service.HttpRequestService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/chat/")
@@ -22,27 +23,32 @@ public class ChatController {
     @Autowired
     ChatRepository chatRepository;
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public Response processValidationError(@NotNull MethodArgumentNotValidException ex) {
-        BindingResult result = ex.getBindingResult();
-        FieldError error = result.getFieldError();
-        return new Response();
-    }
-
-//    private ErrorResponse processFieldError(FieldError error) {
-//        ErrorResponse errorResponse = new ErrorResponse();
-//        if (error != null) {
-//            Locale currentLocale = LocaleContextHolder.getLocale();
-//            String msg = messageSource.getMessage(error.getDefaultMessage(), null, currentLocale);
-//            errorResponse.setMessage(msg);
-//        }
-//        return errorResponse;
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ResponseBody
+//    public Response processValidationError(@NotNull MethodArgumentNotValidException ex) {
+//        BindingResult result = ex.getBindingResult();
+//        FieldError error = result.getFieldError();
+//        return new Response();
 //    }
 
     @GetMapping("/list/{id}")
-    public HttpRequest getChatList(@RequestPart String id){
+    public HttpRequest getChatList(@PathVariable String id){
+        HttpRequest request;
+        try {
+            Long idLong = Long.parseLong(id);
+            Optional optionalChat = chatRepository.findById(idLong);
+            if (optionalChat.isPresent()) {
+                request = HttpRequestService.createHttpRequest(optionalChat.get(), 200);
+            }else request = HttpRequestService.createHttpRequest(null, 300,"invalid id");
+        }catch (Exception e){
+            request = HttpRequestService.createHttpRequest(null, 300,e.getMessage());
+        }
+        return request;
+    }
+
+    @GetMapping("/list")
+    public HttpRequest getChatListAll(){
         HttpRequest request;
         try {
             List<Chat> allChat = chatRepository.findAll();
